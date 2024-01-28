@@ -11,16 +11,17 @@ export class QuizService {
     private quizRepository: QuizRepository
   ){}
 
-  getAllQuizzes(){
-    return this.quizRepository.find({
-      relations: ['questions']
-    });
+  getAllQuizzes(): Promise<Quiz[]>{
+    return this.quizRepository
+    .createQueryBuilder('quiz')
+    .leftJoinAndSelect('quiz.questions', 'qt')
+    .getMany();
   }
 
   async getQuizById(id: number){
     return this.quizRepository.findOne({
      where: {id: id},
-     relations: ['questions']
+     relations: ['questions', 'questions.options']
     })
   }
 
